@@ -58,11 +58,33 @@ print(YTail.shape)  # Выводим размерность Y
 
 model = Sequential()
 model.add(Dense(228, input_dim=228, activation='relu'))
-model.add(Dense(20, activation='relu'))
+model.add(Dense(30, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(2, activation='softmax'))
 opt = tf.keras.optimizers.RMSprop(lr=1e-5)
 model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
 
-history = model.fit(X, YHead, batch_size=64, epochs=40, validation_split=0.2, verbose=False)
+model.fit(X, YHead, batch_size=64, epochs=40, validation_split=0.2, verbose=True)
 model.save('modelHead.h5')
+
+model = Sequential()
+model.add(Dense(228, input_dim=228, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(2, activation='softmax'))
+opt = tf.keras.optimizers.RMSprop(lr=1e-5)
+model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
+
+model.fit(X, YMiddle, batch_size=64, epochs=40, validation_split=0.2, verbose=True)
+model.save('modelMiddle.h5')
+
+model = Sequential()
+model.add(Dense(228, input_dim=228, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(2, activation='softmax'))
+opt = tf.keras.optimizers.RMSprop(lr=1e-5)
+model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
+
+model.fit(X, YTail, batch_size=64, epochs=40, validation_split=0.2, verbose=True)
+model.save('modelTail.h5')
