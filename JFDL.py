@@ -56,35 +56,21 @@ print(YHead.shape)  # Выводим размерность Y
 print(YMiddle.shape)  # Выводим размерность Y
 print(YTail.shape)  # Выводим размерность Y
 
-model = Sequential()
-model.add(Dense(228, input_dim=228, activation='relu'))
-model.add(Dense(30, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(2, activation='softmax'))
-opt = tf.keras.optimizers.RMSprop(lr=1e-5)
-model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
+def modelTrain(Y):
+ model = Sequential()
+ model.add(Dense(228, input_dim=228, activation='relu'))
+ model.add(Dense(30, activation='relu'))
+ model.add(Dropout(0.5))
+ model.add(Dense(2, activation='softmax'))
+ opt = tf.keras.optimizers.RMSprop(lr=1e-5)
+ model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
 
-model.fit(X, YHead, batch_size=64, epochs=40, validation_split=0.2, verbose=True)
+ model.fit(X, Y, batch_size=64, epochs=40, validation_split=0.2, verbose=2)
+ return model
+
+model = modelTrain(YHead)
 model.save('modelHead.h5')
-
-model = Sequential()
-model.add(Dense(228, input_dim=228, activation='relu'))
-model.add(Dense(30, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(2, activation='softmax'))
-opt = tf.keras.optimizers.RMSprop(lr=1e-5)
-model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
-
-model.fit(X, YMiddle, batch_size=64, epochs=40, validation_split=0.2, verbose=True)
+model = modelTrain(YMiddle)
 model.save('modelMiddle.h5')
-
-model = Sequential()
-model.add(Dense(228, input_dim=228, activation='relu'))
-model.add(Dense(30, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(2, activation='softmax'))
-opt = tf.keras.optimizers.RMSprop(lr=1e-5)
-model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
-
-model.fit(X, YTail, batch_size=64, epochs=40, validation_split=0.2, verbose=True)
+model = modelTrain(YTail)
 model.save('modelTail.h5')
