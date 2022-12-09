@@ -38,11 +38,14 @@ print(YHead.shape)  # Выводим размерность Y
 # print(YTail.shape)  # Выводим размерность Y
 
 model = Sequential()
-model.add(Dense(228, input_dim=165, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dense(165, input_dim=165, activation='relu'))
+# model.add(Dropout(0.5))
+model.add(Dense(428, activation='relu'))
+model.add(Dense(28, activation='relu'))
+model.add(Dense(1, activation='tanh')) # !!!!! логичней tanh так так есть положительные и отрицательные значения
 opt = tf.keras.optimizers.Adam(learning_rate=1e-5)
-model.compile(loss='mse', optimizer=opt, metrics=['acc'])
+model.compile(loss='mse', optimizer=opt, metrics=['mae'])
+# model.compile(loss='mae', optimizer=opt, metrics=['mae'])
 model.fit(X, YHead, batch_size=512, epochs=320, validation_split=0.2, verbose=2)
 
 # def modelTrain(Y):
