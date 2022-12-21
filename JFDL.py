@@ -73,23 +73,27 @@ model.compile(loss='mse', optimizer=opt, metrics=['mae'])
 
 X = getFeaturesHead()
 Y = getwinHeadTarget()
-xstart = 0
-xend = 10000000
-delta = 10000000
 
-print(X.shape)
-print(Y.shape)
-
-for n in range(0,11):
- print(str(xstart),str(xend))
+for n in range(0,2):
+ xstart = 0
+ xend = 10000000
+ delta = 13000000
+ print(X.shape)
+ print(Y.shape)
  x_part = X[xstart:xend]
  y_part = Y[xstart:xend]
- print(x_part.shape)
- print(x_part.shape)
- model.fit(x_part, y_part, batch_size=2000, epochs=1, validation_split=0.2, callbacks=[csv_logger])
- xstart=xstart+delta
- xend=xend+delta
- delta=delta+1000
+ print(str(x_part.shape[0]))
+ while x_part.shape[0]>=2000:
+  print(str(x_part.shape[0]))
+  print(str(xstart),str(xend))
+  print(x_part.shape)
+  print(x_part.shape)
+  model.fit(x_part, y_part, batch_size=2000, epochs=1, validation_split=0.2, callbacks=[csv_logger])
+  xstart=xstart+delta
+  xend=xend+delta
+  x_part = X[xstart:xend]
+  y_part = Y[xstart:xend]
+
 
 model.save('modelHeadGen1.h5')
 
