@@ -14,7 +14,7 @@ csv_logger = CSVLogger(datetime.now().strftime("%H%M%S")+'log.csv', append=False
 # os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
 nrows = 10000000
 def getwinHeadTarget():
- df_full = pd.read_csv("targethead.csv", sep=',')
+ df_full = pd.read_csv("featuresHeadTargetChance.csv", sep=',')
  return df_full.astype(float)
 
 def getwinMiddleTarget():
@@ -35,12 +35,12 @@ def getFeaturesMiddle():
 
 def getFeaturesHead():
 
- df_full = pd.read_csv("featureHead.csv", sep=',', dtype = 'bool')
+ df_full = pd.read_csv("featuresHead.csv", sep=',', dtype = 'bool')
  return df_full.astype(bool)
 
 
 model = Sequential()
-model.add(Dense(165, input_dim=165, activation='relu'))
+model.add(Dense(165, input_dim=156, activation='relu'))
 model.add(Dense(428, activation='relu'))
 model.add(Dense(1028, activation='relu'))
 # model.add(Dense(4028, activation='relu'))
@@ -55,8 +55,8 @@ model.compile(loss='mse', optimizer=opt, metrics=['mae'])
 
 # model = keras.models.load_model('modelTailGen1.h5')
 
-X = getFeaturesTail()
-Y = getwinTailTarget()
+X = getFeaturesHead()
+Y = getwinHeadTarget()
 
 for n in range(0,10):
  # xstart = 0
