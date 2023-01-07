@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import datetime
 from keras.callbacks import CSVLogger
 from keras import backend as K
+from sklearn.model_selection import train_test_split
 
 
 csv_logger = CSVLogger(datetime.now().strftime("%H%M%S")+'log.csv', append=False, separator=';')
@@ -39,6 +40,8 @@ def getFeaturesHead():
  return df_full.astype(bool)
 
 
+
+
 model = Sequential()
 model.add(Dense(165, input_dim=156, activation='relu'))
 model.add(Dense(428, activation='relu'))
@@ -58,6 +61,12 @@ model.compile(loss='mse', optimizer=opt, metrics=['mae'])
 X = getFeaturesHead()
 Y = getwinHeadTarget()
 
+x_train, x_validation, y_train, y_validation = train_test_split(X,  # набор параметров
+                                                                Y,  # набор меток классов
+                                                                test_size=0.2,  # процент в тестовую
+                                                                shuffle=False)#, #  перемешивание
+                                                    # random_state=3) # воспроизводимость
+
 for n in range(0,10):
  # xstart = 0
  # xend = 130832450
@@ -72,7 +81,7 @@ for n in range(0,10):
   # print(str(xstart),str(xend))
   # print(x_part.shape)
   # print(x_part.shape)
-  model.fit(X, Y, batch_size=20000, epochs=5, validation_split=0.2, callbacks=[csv_logger])
+  model.fit(x_train, y_train, batch_size=20000, epochs=5, validation_data=(x_validation, y_validation), callbacks=[csv_logger])
   model.save(str(n)+'modelTailGen1.h5')
   K.clear_session()
   # xstart=xstart+delta
