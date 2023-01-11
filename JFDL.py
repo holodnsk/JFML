@@ -8,102 +8,83 @@ from keras.callbacks import CSVLogger
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 
-
 csv_logger = CSVLogger(datetime.now().strftime("%H%M%S")+'log.csv', append=False, separator=';')
 
-# import os
-# os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
 nrows = 10000000
-def getwinHeadTarget():
+def getwinHeadTargetChance():
  df_full = pd.read_csv("featuresHeadTargetChance.csv", sep=',')
  return df_full.astype(float)
 
-def getwinMiddleTarget():
- df_full = pd.read_csv("targetmiddle.csv", sep=',')
+def getwinMiddleTargetChance():
+ df_full = pd.read_csv("featuresMiddleTargetChance.csv", sep=',')
  return df_full.astype(float)
 
-def getwinTailTarget():
- df_full = pd.read_csv("targettail.csv", sep=',')
+def getwinTailTargetChance():
+ df_full = pd.read_csv("featuresTailTargetChance.csv", sep=',')
+ return df_full.astype(float)
+
+def getwinHeadTargetME():
+ df_full = pd.read_csv("featuresHeadTargetME.csv", sep=',')
+ return df_full.astype(float)
+
+def getwinMiddleTargetME():
+ df_full = pd.read_csv("featuresMiddleTargetME.csv", sep=',')
+ return df_full.astype(float)
+
+def getwinTailTargetME():
+ df_full = pd.read_csv("featuresTailTargetME.csv", sep=',')
  return df_full.astype(float)
 
 def getFeaturesTail():
- df_full = pd.read_csv("featureTail.csv", sep=',',  dtype = 'bool') #
+ df_full = pd.read_csv("featuresTail.csv", sep=',',  dtype = 'bool') #
  return df_full.astype(bool)
 
 def getFeaturesMiddle():
- df_full = pd.read_csv("featureMiddle.csv", sep=',',  dtype = 'bool')
+ df_full = pd.read_csv("featuresMiddle.csv", sep=',',  dtype = 'bool')
  return df_full.astype(bool)
 
 def getFeaturesHead():
-
  df_full = pd.read_csv("featuresHead.csv", sep=',', dtype = 'bool')
  return df_full.astype(bool)
 
-
-
-
-model = Sequential()
-model.add(Dense(165, input_dim=156, activation='relu'))
-model.add(Dense(428, activation='relu'))
-model.add(Dense(1028, activation='relu'))
-# model.add(Dense(4028, activation='relu'))
-# model.add(Dense(1028, activation='relu'))
-model.add(Dense(428, activation='relu'))
-model.add(Dense(100, activation='relu'))
-# model.add(Dense(428, activation='relu'))
-model.add(Dense(28, activation='relu'))
-model.add(Dense(1, activation='tanh'))
-opt = tf.keras.optimizers.Adam(learning_rate=1e-5)
-model.compile(loss='mse', optimizer=opt, metrics=['mae'])
-
-# model = keras.models.load_model('modelTailGen1.h5')
+def createModel(features, target, name):
+ model = Sequential()
+ model.add(Dense(165, input_dim=156, activation='relu'))
+ model.add(Dense(428, activation='relu'))
+ model.add(Dense(1028, activation='relu'))
+ model.add(Dense(428, activation='relu'))
+ model.add(Dense(100, activation='relu'))
+ model.add(Dense(28, activation='relu'))
+ model.add(Dense(1, activation='tanh'))
+ opt = tf.keras.optimizers.Adam(learning_rate=1e-5)
+ model.compile(loss='mse', optimizer=opt, metrics=['mae'])
+ print(features.shape)
+ print(target.shape)
+ x_train, x_validation, y_train, y_validation = train_test_split(features, target, test_size=0.02, shuffle=False)
+ print(x_train.shape)
+ print(y_train.shape)
+ print(x_validation.shape)
+ print(x_validation.shape)
+ model.fit(x_train, y_train, batch_size=20000, epochs=40, validation_data=(x_validation, y_validation),callbacks=[csv_logger])
+ model.save(str(name))
 
 X = getFeaturesHead()
-Y = getwinHeadTarget()
+Y = getwinHeadTargetChance()
+createModel(X,Y,'HeadTargetChance.h5')
 
-x_train, x_validation, y_train, y_validation = train_test_split(X,  # набор параметров
-                                                                Y,  # набор меток классов
-                                                                test_size=0.2,  # процент в тестовую
-                                                                shuffle=False)#, #  перемешивание
-                                                    # random_state=3) # воспроизводимость
+Y = getwinHeadTargetME()
+createModel(X,Y,'HeadTargetME.h5')
 
-for n in range(0,10):
- # xstart = 0
- # xend = 130832450
- # delta = 10000000
- print(X.shape)
- print(Y.shape)
- # x_part = X[xstart:xend]
- # y_part = Y[xstart:xend]
- # print(str(x_part.shape[0]))
- while True:
-  # print(str(x_part.shape[0]))
-  # print(str(xstart),str(xend))
-  # print(x_part.shape)
-  # print(x_part.shape)
-  model.fit(x_train, y_train, batch_size=20000, epochs=5, validation_data=(x_validation, y_validation), callbacks=[csv_logger])
-  model.save(str(n)+'modelTailGen1.h5')
-  K.clear_session()
-  # xstart=xstart+delta
-  # xend=xend+delta
-  # x_part = X[xstart:xend]
-  # y_part = Y[xstart:xend]
+X = getFeaturesMiddle()
+Y = getwinMiddleTargetChance()
+createModel(X,Y,'MiddleTargetChance.h5')
 
+Y = getwinMiddleTargetME()
+createModel(X,Y,'MiddleTargetME.h5')
 
-model.save('modelTailGen1.h5')
+X = getFeaturesTail()
+Y = getwinTailTargetChance()
+createModel(X,Y,'TailTargetChance.h5')
 
-# X = getFeaturesMiddle()
-# Y = getwinMiddleTarget()
-# print(X.shape)
-# print(Y.shape)
-#
-# model = modelTrain(X,Y)
-# model.save('modelMiddleGen1.h5')
-#
-# X = getFeaturesTail()
-# Y = getwinTailTarget()
-# print(X.shape)
-# print(Y.shape)
-#
-# model = modelTrain(X,Y)
-# model.save('modelTailGen1.h5')
+Y = getwinTailTargetME()
+createModel(X,Y,'TailTargetME.h5')
