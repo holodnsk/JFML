@@ -8,7 +8,7 @@ from keras.callbacks import CSVLogger
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 
-csv_logger = CSVLogger(datetime.now().strftime("%H%M%S")+'log.csv', append=False, separator=';')
+csv_logger = CSVLogger(datetime.now().strftime("%H%M%S")+'log.csv', append=True, separator=';')
 
 nrows = 10000000
 def getwinHeadTargetChance():
